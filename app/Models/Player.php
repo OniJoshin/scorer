@@ -13,5 +13,10 @@ class Player extends Model
     {
         return $this->hasMany(Score::class);
     }
+    
+    public function gameSessionResults()
+    {
+        return $this->hasMany(GameSessionResult::class);
+    }
 
 }

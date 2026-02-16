@@ -7,10 +7,10 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\ScoreController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\GameSessionController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\HomeController;
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
 
@@ -39,6 +39,14 @@ Route::patch('/game-session-results/{result}', [\App\Http\Controllers\GameSessio
 
 Route::post('/game-sessions/{session}/update-results', [GameSessionController::class, 'updateResults'])
     ->name('game_sessions.update_results');
+
+// Settings routes
+Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+Route::post('/settings/theme', [SettingsController::class, 'updateTheme'])->name('settings.theme');
+
+// More menu
+Route::view('/more', 'more.index')->name('more.index');
 
 
 

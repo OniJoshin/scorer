@@ -9,12 +9,14 @@ class GameSession extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['game_id', 'notes', 'started_at', 'completed_at'];
+    protected $fillable = ['game_id', 'notes', 'helper_type', 'target_score', 'started_at', 'completed_at'];
 
     protected $dates = ['started_at', 'completed_at'];
 
     protected $casts = [
         'notes' => 'string',
+        'helper_type' => 'string',
+        'target_score' => 'integer',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
     ];

@@ -23,7 +23,6 @@ class GameController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'notes' => 'nullable|string',
-            'scoring_rules' => 'nullable|string',
             'played_at' => 'nullable|date',
             'position_points' => 'nullable|array',
             'position_points.*' => 'nullable|integer|min:0',
@@ -31,10 +30,6 @@ class GameController extends Controller
 
         $data = $request->only(['name', 'notes', 'played_at']);
         $data['position_points'] = $request->filled('position_points') ? $request->position_points : null;
-
-        $data['scoring_rules'] = $request->filled('scoring_rules')
-            ? json_decode($request->scoring_rules, true)
-            : null;
 
 
         Game::create($data);
@@ -51,7 +46,6 @@ class GameController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'notes' => 'nullable|string',
-            'scoring_rules' => 'nullable|string',
             'played_at' => 'nullable|date',
             'position_points' => 'nullable|array',
             'position_points.*' => 'nullable|integer|min:0',
@@ -59,10 +53,6 @@ class GameController extends Controller
 
         $data = $request->only(['name', 'notes', 'played_at']);
         $data['position_points'] = $request->filled('position_points') ? $request->position_points : null;
-
-        $data['scoring_rules'] = $request->filled('scoring_rules')
-            ? json_decode($request->scoring_rules, true)
-            : null;
 
         $game->update($data);
         return redirect()->route('games.index')->with('success', 'Game updated!');

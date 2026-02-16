@@ -1,102 +1,88 @@
 @extends('layouts.app')
 
+@section('title', 'Add Game')
+
 @section('content')
-<h1 class="text-3xl font-bold mb-6 text-purple-700">➕ Add Game</h1>
-
-<form action="{{ route('games.store') }}" method="POST" class="space-y-6">
-    @csrf
-
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Game Name</label>
-        <input type="text" name="name" value="{{ old('name') }}" required
-               class="mt-1 block w-full rounded border-gray-300 shadow-sm">
-    </div>
-
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Played At</label>
-        <input type="date" name="played_at" value="{{ old('played_at') }}"
-               class="mt-1 block w-full rounded border-gray-300 shadow-sm">
-    </div>
-
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Notes (optional)</label>
-        <textarea name="notes" rows="3" class="mt-1 block w-full rounded border-gray-300 shadow-sm">{{ old('notes') }}</textarea>
-    </div>
-
-    <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Points Per Position</label>
-        <div class="grid grid-cols-2 gap-4">
-            @for($i = 1; $i <= 4; $i++)
-                <div>
-                    <label class="block text-sm">{{ $i }}{{ $i==1?'st':($i==2?'nd':($i==3?'rd':'th')) }} Place</label>
-                    <input type="number" name="position_points[{{ $i }}]" value="{{ old('position_points.'.$i) }}" min="0"
-                           class="mt-1 block w-full rounded border-gray-300 shadow-sm">
-                </div>
-            @endfor
+<div class="max-w-3xl mx-auto">
+    {{-- Page Header --}}
+    <div class="mb-6">
+        <div class="flex items-center mb-2">
+            <a href="{{ route('games.index') }}" 
+               class="mr-3 p-2 hover:bg-app-secondary rounded-lg transition-colors">
+                <x-heroicon-o-arrow-left class="w-6 h-6 text-app-secondary"/>
+            </a>
+            <h1 class="text-3xl font-bold text-app-primary">Add Game</h1>
         </div>
+        <p class="text-app-secondary">Add a new board game to your library</p>
     </div>
-
-    <div x-data="scoringRuleBuilder()" class="mt-6 bg-purple-50 p-4 rounded">
-        <h3 class="text-lg font-semibold mb-3">Scoring Rules</h3>
-
-        <template x-for="(field, index) in fields" :key="index">
-            <div class="grid grid-cols-5 gap-2 mb-2 items-center">
-                <input type="text" class="border rounded px-2 py-1 col-span-2"
-                    placeholder="Label" x-model="field.label">
-
-                <input type="text" class="border rounded px-2 py-1"
-                    placeholder="Key" x-model="field.key">
-
-                <select class="border rounded px-2 py-1" x-model="field.type">
-                    <option value="number">Number</option>
-                    <option value="checkbox">Checkbox</option>
-                </select>
-
-                <div class="flex gap-1 items-center">
-                    <input type="number" step="any" class="border rounded px-2 py-1 w-20"
-                        placeholder="Mult" x-model="field.multiplier">
-                    <input type="number" class="border rounded px-2 py-1 w-20"
-                        placeholder="Points" x-model="field.points">
-                    <button type="button" class="text-red-600 font-bold" @click="removeField(index)">✕</button>
+    
+    <form action="{{ route('games.store') }}" method="POST" class="space-y-6">
+        @csrf
+        
+        {{-- Basic Information --}}
+        <div class="bg-app-elevated rounded-xl p-6 border border-app">
+            <h2 class="text-lg font-semibold text-app-primary mb-4 flex items-center">
+                <x-heroicon-o-information-circle class="w-5 h-5 mr-2 text-[var(--color-primary)]"/>
+                Basic Information
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-app-secondary mb-2">Game Name *</label>
+                    <input type="text" name="name" value="{{ old('name') }}" required placeholder="e.g., Ticket to Ride"
+                           class="w-full px-4 py-3 border border-app-dark rounded-lg bg-app-primary text-app-primary focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-shadow">
+                    @error('name')
+                        <p class="text-sm text-[var(--color-error)] mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-app-secondary mb-2">First Played Date</label>
+                    <input type="date" name="played_at" value="{{ old('played_at') }}"
+                           class="w-full px-4 py-3 border border-app-dark rounded-lg bg-app-primary text-app-primary focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-shadow">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-app-secondary mb-2">Notes (Optional)</label>
+                    <textarea name="notes" rows="3" placeholder="Add any notes about this game..."
+                              class="w-full px-4 py-3 border border-app-dark rounded-lg bg-app-primary text-app-primary focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-shadow">{{ old('notes') }}</textarea>
                 </div>
             </div>
-        </template>
-
-        <button type="button" class="mt-2 px-3 py-1 bg-purple-600 text-white rounded"
-                @click="addField()">Add Rule Field</button>
-
-        <!-- Hidden JSON field -->
-        <textarea name="scoring_rules" x-model="json" hidden></textarea>
-    </div>
-
-
-    <div class="pt-4">
-        <button type="submit"
-                class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 shadow">
-            Save Game
-        </button>
-        <a href="{{ route('games.index') }}" class="inline-block ml-3 text-sm text-gray-600 hover:underline">Cancel</a>
-    </div>
-</form>
-
-<script>
-function scoringRuleBuilder() {
-    return {
-        fields: @json(old('scoring_rules', [])),
-        addField() {
-            this.fields.push({ label: '', key: '', type: 'number', multiplier: null, points: null });
-        },
-        removeField(index) {
-            this.fields.splice(index, 1);
-        },
-        get json() {
-            return JSON.stringify({
-                fields: this.fields,
-                auto_rank: 'sum'
-            });
-        }
-    }
-}
-</script>
-
+        </div>
+        
+        {{-- Position-Based Points --}}
+        <div class="bg-app-elevated rounded-xl p-6 border border-app">
+            <h2 class="text-lg font-semibold text-app-primary mb-2 flex items-center">
+                <x-heroicon-o-trophy class="w-5 h-5 mr-2 text-[var(--color-primary)]"/>
+                Position Points
+            </h2>
+            <p class="text-sm text-app-secondary mb-4">Award leaderboard points based on finishing position</p>
+            
+            <div class="grid grid-cols-2 gap-3">
+                @for($i = 1; $i <= 8; $i++)
+                    <div>
+                        <label class="block text-sm font-medium text-app-secondary mb-2">
+                            {{ $i }}{{ $i==1?'st':($i==2?'nd':($i==3?'rd':'th')) }} Place
+                        </label>
+                        <input type="number" name="position_points[{{ $i }}]" value="{{ old('position_points.'.$i) }}" min="0" placeholder="0"
+                               class="w-full px-4 py-3 border border-app-dark rounded-lg bg-app-primary text-app-primary focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-shadow">
+                    </div>
+                @endfor
+            </div>
+        </div>
+        
+        {{-- Action Buttons --}}
+        <div class="flex items-center space-x-3 pt-4">
+            <button type="submit"
+                    class="flex-1 flex items-center justify-center px-6 py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold rounded-lg transition-colors">
+                <x-heroicon-s-check class="w-5 h-5 mr-2"/>
+                Save Game
+            </button>
+            <a href="{{ route('games.index') }}" 
+               class="px-6 py-3 border-2 border-app-dark hover:bg-app-secondary text-app-primary font-semibold rounded-lg transition-colors">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
 @endsection

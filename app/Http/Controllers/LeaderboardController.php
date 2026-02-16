@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
-use App\Models\Game;
+use App\Models\Score;
 use App\Models\Player;
+use App\Models\Game;
 
 class LeaderboardController extends Controller
 {
@@ -18,14 +17,14 @@ class LeaderboardController extends Controller
         $playersQuery = Player::query()
             ->withCount(['scores as scores_count' => function ($query) use ($year, $gameId) {
                 $query->when($year, function ($q) use ($year) {
-                    $q->whereHas('game', fn($g) => $g->whereYear('played_at', $year));
+                    $q->whereYear('played_at', $year);
                 })->when($gameId, function ($q) use ($gameId) {
                     $q->where('game_id', $gameId);
                 });
             }])
             ->withSum(['scores as total_points' => function ($query) use ($year, $gameId) {
                 $query->when($year, function ($q) use ($year) {
-                    $q->whereHas('game', fn($g) => $g->whereYear('played_at', $year));
+                    $q->whereYear('played_at', $year);
                 })->when($gameId, function ($q) use ($gameId) {
                     $q->where('game_id', $gameId);
                 });
@@ -33,8 +32,12 @@ class LeaderboardController extends Controller
 
         $players = $playersQuery->orderByDesc('total_points')->get();
 
-        $availableYears = Game::selectRaw('YEAR(played_at) as year')
-            ->whereNotNull('played_at')->distinct()->orderByDesc('year')->pluck('year');
+        $availableYears = Score::query()
+            ->selectRaw('YEAR(played_at) as year')
+            ->whereNotNull('played_at')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
 
         $availableGames = Game::orderBy('name')->get();
 

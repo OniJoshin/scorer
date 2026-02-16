@@ -7,6 +7,121 @@
 @source "../views";
 
 @theme {
+    /* Typography */
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    
+    /* Brand Colors */
+    --color-primary: #7C3AED;
+    --color-primary-hover: #6D28D9;
+    --color-primary-light: #EDE9FE;
+    --color-primary-dark: #5B21B6;
+    
+    /* Semantic Colors */
+    --color-success: #10B981;
+    --color-success-bg: #D1FAE5;
+    --color-error: #EF4444;
+    --color-error-bg: #FEE2E2;
+    --color-warning: #F59E0B;
+    --color-warning-bg: #FEF3C7;
+    --color-info: #3B82F6;
+    --color-info-bg: #DBEAFE;
+}
+
+/* Light Theme (Default) */
+:root {
+    /* Backgrounds */
+    --color-bg-primary: #FFFFFF;
+    --color-bg-secondary: #F9FAFB;
+    --color-bg-tertiary: #F3F4F6;
+    --color-bg-elevated: #FFFFFF;
+    
+    /* Text */
+    --color-text-primary: #111827;
+    --color-text-secondary: #6B7280;
+    --color-text-tertiary: #9CA3AF;
+    
+    /* Borders */
+    --color-border: #E5E7EB;
+    --color-border-dark: #D1D5DB;
+    --color-divider: #F3F4F6;
+}
+
+/* Dark Theme */
+:root.dark {
+    /* Backgrounds */
+    --color-bg-primary: #111827;
+    --color-bg-secondary: #1F2937;
+    --color-bg-tertiary: #374151;
+    --color-bg-elevated: #1F2937;
+    
+    /* Text */
+    --color-text-primary: #F9FAFB;
+    --color-text-secondary: #D1D5DB;
+    --color-text-tertiary: #9CA3AF;
+    
+    /* Borders */
+    --color-border: #374151;
+    --color-border-dark: #4B5563;
+    --color-divider: #1F2937;
+    
+    /* Brand Colors (adjusted for dark mode) */
+    --color-primary: #8B5CF6;
+    --color-primary-hover: #A78BFA;
+    --color-primary-light: #312E81;
+    --color-primary-dark: #C4B5FD;
+    
+    /* Semantic Colors (adjusted for dark mode) */
+    --color-success: #34D399;
+    --color-success-bg: #064E3B;
+    --color-error: #F87171;
+    --color-error-bg: #7F1D1D;
+    --color-warning: #FBBF24;
+    --color-warning-bg: #78350F;
+    --color-info: #60A5FA;
+    --color-info-bg: #1E3A8A;
+}
+
+/* Utility Classes for Theme Colors */
+.bg-app-primary { background-color: var(--color-bg-primary); }
+.bg-app-secondary { background-color: var(--color-bg-secondary); }
+.bg-app-tertiary { background-color: var(--color-bg-tertiary); }
+.bg-app-elevated { background-color: var(--color-bg-elevated); }
+
+.text-app-primary { color: var(--color-text-primary); }
+.text-app-secondary { color: var(--color-text-secondary); }
+.text-app-tertiary { color: var(--color-text-tertiary); }
+
+.border-app { border-color: var(--color-border); }
+.border-app-dark { border-color: var(--color-border-dark); }
+
+/* Screen Reader Only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Animation Utilities */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+.no-animations *,
+.no-animations *::before,
+.no-animations *::after {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
 }
